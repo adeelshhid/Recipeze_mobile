@@ -1,0 +1,10 @@
+<resources>
+    <string name="google_app_id" translatable="false">1:69865606924:android:e5ded654dae4d98ec34329</string>
+    <string name="gcm_defaultSenderId" translatable="false">69865606924</string>
+    <string name="default_web_client_id" translatable="false">unset</string>
+    <string name="firebase_database_url" translatable="false">https://flutter-1a3e9.firebaseio.com</string>
+    <string name="google_api_key" translatable="false">AIzaSyCYwC9cjjJB1sOCmFKcqYMGp3LnI4JMhNE</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyCYwC9cjjJB1sOCmFKcqYMGp3LnI4JMhNE</string>
+    <string name="project_id" translatable="false">flutter-1a3e9</string>
+    <string name="storage_bucket" translatable="false">flutter-1a3e9.appspot.com</string>
+</resources>
