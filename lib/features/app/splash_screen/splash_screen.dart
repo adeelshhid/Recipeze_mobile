@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 class SplashScreen extends StatefulWidget {
   final Widget? child;
   const SplashScreen({super.key, this.child});
@@ -11,27 +10,55 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
 
-@override
+  @override
   void initState() {
     Future.delayed(
-      const Duration(seconds: 3),(){
-        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => widget.child!), (route) => false);
-    }
+      const Duration(seconds: 3), () {
+        Navigator.pushAndRemoveUntil(
+          context, 
+          MaterialPageRoute(builder: (context) => widget.child!), 
+          (route) => false
+        );
+      }
     );
     super.initState();
   }
 
-
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
+      backgroundColor: const Color((0xFF00B473)), // Set the background to green
       body: Center(
-        child: Text(
-          "Welcome To Flutter Firebase",
-          style: TextStyle(
-            color: Colors.blue,
-            fontWeight: FontWeight.bold,
-          ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              'assets/logo.png',  // Replace with your logo path
+              height: 100,
+              width: 100,
+            ),
+            const SizedBox(height: 24),
+            const Text(
+              "Welcome to Recipeze",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              "Your Favorite Recipe App",
+              style: TextStyle(
+                color: Colors.white70,
+                fontSize: 18,
+              ),
+            ),
+            const SizedBox(height: 40),
+            const CircularProgressIndicator(
+              color: Colors.white,  // Circular loader color
+            ),
+          ],
         ),
       ),
     );
