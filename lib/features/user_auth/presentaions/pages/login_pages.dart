@@ -5,6 +5,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_login/features/user_auth/firebase_auth_implementation/firebase_auth_services.dart';
 import 'package:firebase_login/features/user_auth/presentaions/pages/sign_up_page.dart';
 import 'package:firebase_login/global/common/toast.dart';
+import 'package:firebase_login/features/user_auth/presentaions/pages/kitchen_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -238,9 +239,9 @@ class _LoginPageState extends State<LoginPage> {
 
         if (user != null) {
           showToast(message: "User signed in successfully: ${user.email}");
-          Navigator.pushNamed(context, '/Home');
+          Navigator.pushNamed(context, '/kitchen');
         } else {
-          showToast(message: "User is null, something went wrong.");
+          showToast(message: "email or Password is incorrect.");
         }
       } catch (e) {
         showToast(message: "Sign-up failed: $e");
@@ -268,7 +269,7 @@ class _LoginPageState extends State<LoginPage> {
         );
 
         await _firebaseAuth.signInWithCredential(credential);
-        Navigator.pushNamed(context, "/Home");
+        Navigator.pushNamed(context, "/kitchen");
       }
     } catch (e) {
       showToast(message: "Some error occurred: $e");

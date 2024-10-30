@@ -3,7 +3,9 @@ import 'package:firebase_login/features/user_auth/presentaions/pages/login_pages
 import 'package:flutter/material.dart';
 import 'package:firebase_login/features/user_auth/presentaions/pages/Home_page.dart';
 import 'package:firebase_login/features/user_auth/presentaions/pages/sign_up_page.dart';
-
+import 'package:firebase_login/features/user_auth/presentaions/pages/kitchen_page.dart';
+import 'package:firebase_login/features/user_auth/presentaions/pages/ingredients_page.dart';
+import 'package:firebase_login/features/user_auth/presentaions/pages/bookmarks_page.dart';
 
 
 import 'package:firebase_core/firebase_core.dart';
@@ -28,6 +30,9 @@ class MyApp extends StatelessWidget {
         '/login': (context) => const LoginPage(),
         '/signUp': (context) => const SignUpPage(),
         '/Home': (context) => const HomePage(),
+        '/kitchen': (context) => const KitchenPage(),
+        '/ingredients': (context) => const IngredientsPage(),
+        '/bookmarks' :  (context) => const BookmarksPage(),
       },
     );
   }
