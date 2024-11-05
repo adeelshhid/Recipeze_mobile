@@ -1,4 +1,4 @@
-# firebase_login
+# Recipeze_mobile
 
 A new Flutter project.
 
