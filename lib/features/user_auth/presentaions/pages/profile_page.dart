@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:firebase_login/features/user_auth/presentaions/pages/login_pages.dart';
-
+import 'package:firebase_login/core/api/auth_service.dart';
+import 'package:firebase_login/core/api/api_client.dart';
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
 
@@ -10,22 +10,41 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  void _logout() {
-    // Navigate to the login page
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const LoginPage()),
+  // Create an instance of ApiClient with base URL and default headers
+  late final ApiClient apiClient;
+  late final AuthService authService;
+
+  _ProfilePageState() {
+    apiClient = ApiClient(
+      baseUrl: 'http://10.0.2.2:8000/api/v1/recipeze',
+      defaultHeaders: {'Content-Type': 'application/json'},
     );
 
-    // Show a toast message
-    Fluttertoast.showToast(
-      msg: "User logged out successfully",
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-      backgroundColor: Colors.green,
-      textColor: Colors.white,
-      fontSize: 16.0,
-    );
+    // Pass the apiClient to AuthService
+    authService = AuthService(apiClient: apiClient);
+  }
+
+  void _logout() async {
+    try {
+      await authService.logout();
+      // Navigate to the login page after successful logout
+      Navigator.pushReplacementNamed(context, '/login');
+      // Fluttertoast.showToast(
+      //   msg: 'User logged out successfully',
+      //   toastLength: Toast.LENGTH_SHORT,
+      //   gravity: ToastGravity.BOTTOM,
+      //   backgroundColor: Colors.green,
+      //   textColor: Colors.white,
+      // );
+    } catch (e) {
+      Fluttertoast.showToast(
+        msg: 'Logout failed: $e',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+    }
   }
 
   @override
@@ -33,6 +52,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: const Color(0xff00b473),
         centerTitle: true,
         title: const Text(
@@ -60,26 +80,11 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             const SizedBox(height: 20),
 
-            // Profile Name and Join Date
-            const Text(
-              "........",
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 5),
-            const Text(
-              "Joining Date: 18/9/2024",
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.normal,
-                color: Colors.grey,
-              ),
-            ),
-            const SizedBox(height: 20),
-
             // Account, Share, Feedback options
+            // GestureDetector(
+            //   onTap: _navigateToProfileInfo, // Navigate to Profile Info Page when pressed
+            //   child: _buildOptionRow(Icons.account_circle, "Account"),
+            // ),
             _buildOptionRow(Icons.account_circle, "Account"),
             const Divider(),
             _buildOptionRow(Icons.share, "Share"),

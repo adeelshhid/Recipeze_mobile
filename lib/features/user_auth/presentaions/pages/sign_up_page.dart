@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_login/features/user_auth/firebase_auth_implementation/firebase_auth_services.dart';
-import 'package:firebase_login/features/user_auth/presentaions/pages/Home_Page.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_login/global/common/toast.dart';
+import 'package:firebase_login/core/api/api_client.dart';
+import 'package:firebase_login/core/api/auth_service.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -14,34 +15,61 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
+  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
-  final TextEditingController _usernameController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   bool _isPasswordVisible = false; // Password visibility toggle for password
   bool _isConfirmPasswordVisible = false; // Password visibility toggle for confirm password
   bool _isLoading = false;
 
+  late final ApiClient apiClient;
+  late final AuthService authService;
+
+  _SignUpPageState() {
+    apiClient = ApiClient(
+      baseUrl: 'http://10.0.2.2:8000/api/v1/recipeze',
+      defaultHeaders: {'Content-Type': 'application/json'},
+    );
+
+    // Pass the apiClient to AuthService
+    authService = AuthService(apiClient: apiClient);
+  }
+
   Future<void> _signUp() async {
     if (_formKey.currentState!.validate()) {
       if (_passwordController.text != _confirmPasswordController.text) {
-        showToast(message: "Passwords do not match");
+        Fluttertoast.showToast(
+          msg: "Passwords do not match",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+        );
         return;
       }
       setState(() {
         _isLoading = true;
       });
       try {
-        User? user = await FirebaseAuthServices().signUpWithEmailAndPassword(
-            _emailController.text, _passwordController.text);
-        if (user != null) {
-          Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => const HomePage()));
+        bool success = await authService.register(
+          _nameController.text,
+          _emailController.text,
+          _passwordController.text,
+        );
+        if (success) {
+          Navigator.pushReplacementNamed(context, '/login');
         }
       } catch (e) {
-        showToast(message: 'An unexpected error occurred: ${e.toString()}');
+        Fluttertoast.showToast(
+          msg: 'An unexpected error occurred: ${e.toString()}',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+        );
       } finally {
         setState(() {
           _isLoading = false;
@@ -53,8 +81,19 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color((0xFF00B473)),
-      body: SingleChildScrollView( // Wrap content in a scrollable view
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF00B473),
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        centerTitle: true,
+      ),
+      backgroundColor: const Color(0xFF00B473),
+      body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Form(
@@ -62,10 +101,10 @@ class _SignUpPageState extends State<SignUpPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(height: 50), // Add some space from the top
+                const SizedBox(height: 50),
                 Image.asset(
                   'assets/logo.png',
-                  height: 150,
+                  height: 175,
                   width: 500,
                 ),
                 const SizedBox(height: 16),
@@ -76,26 +115,26 @@ class _SignUpPageState extends State<SignUpPage> {
                 ),
                 const SizedBox(height: 16),
 
-                // Username Input
+                // Full Name Input
                 TextFormField(
-                  controller: _usernameController,
+                  controller: _nameController,
                   decoration: InputDecoration(
-                    filled: true, // Makes the field background white
-                    fillColor: Colors.white, // White background for the input
-                    labelText: "Full Name", // Change label to 'Full Name' like the second image
+                    filled: true,
+                    fillColor: Colors.white,
+                    labelText: "Full Name",
                     labelStyle: const TextStyle(color: Colors.black),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10), // Rounded corners
+                      borderRadius: BorderRadius.circular(10),
                       borderSide: const BorderSide(color: Colors.transparent),
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10), // Rounded corners
+                      borderRadius: BorderRadius.circular(10),
                       borderSide: const BorderSide(color: Colors.transparent),
                     ),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return "Please enter your username";
+                      return "Please enter your full name";
                     }
                     return null;
                   },
@@ -107,11 +146,11 @@ class _SignUpPageState extends State<SignUpPage> {
                   controller: _emailController,
                   decoration: InputDecoration(
                     filled: true,
-                    fillColor: Colors.white, // White background
+                    fillColor: Colors.white,
                     labelText: "Email",
                     labelStyle: const TextStyle(color: Colors.black),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10), // Rounded corners
+                      borderRadius: BorderRadius.circular(10),
                       borderSide: const BorderSide(color: Colors.transparent),
                     ),
                     enabledBorder: OutlineInputBorder(
@@ -131,13 +170,13 @@ class _SignUpPageState extends State<SignUpPage> {
                 ),
                 const SizedBox(height: 16),
 
-                // Password Input with Visibility Toggle
+                // Password Input
                 TextFormField(
                   controller: _passwordController,
-                  obscureText: !_isPasswordVisible, // Toggle visibility
+                  obscureText: !_isPasswordVisible,
                   decoration: InputDecoration(
                     filled: true,
-                    fillColor: Colors.white, // White background
+                    fillColor: Colors.white,
                     labelText: "Password",
                     labelStyle: const TextStyle(color: Colors.black),
                     border: OutlineInputBorder(
@@ -172,13 +211,13 @@ class _SignUpPageState extends State<SignUpPage> {
                 ),
                 const SizedBox(height: 16),
 
-                // Confirm Password Input with Visibility Toggle
+                // Confirm Password Input
                 TextFormField(
                   controller: _confirmPasswordController,
-                  obscureText: !_isConfirmPasswordVisible, // Toggle visibility
+                  obscureText: !_isConfirmPasswordVisible,
                   decoration: InputDecoration(
                     filled: true,
-                    fillColor: Colors.white, // White background
+                    fillColor: Colors.white,
                     labelText: "Repeat Password",
                     labelStyle: const TextStyle(color: Colors.black),
                     border: OutlineInputBorder(
@@ -205,6 +244,9 @@ class _SignUpPageState extends State<SignUpPage> {
                     if (value == null || value.isEmpty) {
                       return "Please confirm your password";
                     }
+                    if (value != _passwordController.text) {
+                      return "Passwords do not match";
+                    }
                     return null;
                   },
                 ),
@@ -222,10 +264,10 @@ class _SignUpPageState extends State<SignUpPage> {
                         ),
                         child: const Text(
                           "Sign Up",
-                          style: TextStyle(color: Color((0xFF00B473))),
+                          style: TextStyle(color: Color(0xFF00B473)),
                         ),
                       ),
-                const SizedBox(height: 50), // Add space at the bottom
+                const SizedBox(height: 50),
               ],
             ),
           ),

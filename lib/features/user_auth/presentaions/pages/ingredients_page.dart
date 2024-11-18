@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_login/features/user_auth/presentaions/pages/kitchen_page.dart';
-import 'package:firebase_login/features/user_auth/presentaions/pages/bookmarks_page.dart';
-//import 'package:firebase_login/features/user_auth/presentaions/pages/profile_page.dart';
+
 
 class IngredientsPage extends StatefulWidget {
   const IngredientsPage({super.key});
@@ -12,6 +10,35 @@ class IngredientsPage extends StatefulWidget {
 
 class _IngredientsPageState extends State<IngredientsPage> {
   final TextEditingController _searchController = TextEditingController();
+  final List<String> ingredients = [
+    "Rice (Any)",
+    "Pasta (Any)",
+    "Chicken (Any)",
+    "Olive Oil",
+    "Vegetable Oil",
+    "Eggs",
+    "Tomato Paste",
+    "Tomato Sauce",
+    "Cooking Cream",
+    "Flour",
+    "Baking Powder",
+    "Butter",
+    "Salt",
+    "Sugar",
+    "Balsamic Vinegar",
+    "Vanilla Extract",
+  ];
+
+  // Map to keep track of selected ingredients
+  final Map<String, bool> selectedIngredients = {};
+
+  @override
+  void initState() {
+    super.initState();
+    for (var ingredient in ingredients) {
+      selectedIngredients[ingredient] = false;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,12 +51,19 @@ class _IngredientsPageState extends State<IngredientsPage> {
           "Ingredients",
           style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
         ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.pop(context); // Navigate back to Kitchen Page
+          },
+        ),
       ),
       body: Container(
         color: Colors.white,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Search Bar
               TextField(
@@ -44,19 +78,41 @@ class _IngredientsPageState extends State<IngredientsPage> {
               ),
               const SizedBox(height: 20),
 
-              // Placeholder for the ingredients content
+              // Cooking Essentials Section
+              const Text(
+                "Cooking Essentials",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 10),
+
+              // Ingredients List as Selectable Chips
               Expanded(
-                child: ListView(
-                  children: [
-                    const Text(
-                      "Cooking Essentials",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                child: Wrap(
+                  spacing: 10,
+                  runSpacing: 10,
+                  children: ingredients.map((ingredient) {
+                    final isSelected = selectedIngredients[ingredient]!;
+                    return ChoiceChip(
+                      label: Text(
+                        ingredient,
+                        style: TextStyle(
+                          color: isSelected ? Colors.white : Colors.black,
+                          fontSize: 14,
+                        ),
                       ),
-                    ),
-                    // Add content here (lists of ingredients etc.)
-                  ],
+                      selected: isSelected,
+                      onSelected: (selected) {
+                        setState(() {
+                          selectedIngredients[ingredient] = selected;
+                        });
+                      },
+                      selectedColor: const Color(0xff00b473),
+                      backgroundColor: Colors.grey[200],
+                    );
+                  }).toList(),
                 ),
               ),
               const SizedBox(height: 20),
@@ -82,47 +138,6 @@ class _IngredientsPageState extends State<IngredientsPage> {
           ),
         ),
       ),
-      // bottomNavigationBar: BottomNavigationBar(
-      //   selectedItemColor: const Color(0xff00b473),
-      //   unselectedItemColor: Colors.grey,
-      //   currentIndex: 0,
-      //   onTap: (index) {
-      //     switch (index) {
-      //       case 0:
-      //         Navigator.pushReplacement(
-      //           context,
-      //           MaterialPageRoute(builder: (context) => const KitchenPage()),
-      //         );
-      //         break;
-      //       case 1:
-      //         Navigator.pushReplacement(
-      //           context,
-      //           MaterialPageRoute(builder: (context) => const BookmarksPage()),
-      //         );
-      //         break;
-      //       // case 2:
-      //       //   Navigator.pushReplacement(
-      //       //     context,
-      //       //     MaterialPageRoute(builder: (context) => const ProfilePage()),
-      //       //   );
-      //       //   break;
-      //     }
-      //   },
-      //   items: const [
-      //     BottomNavigationBarItem(
-      //       icon: Icon(Icons.kitchen),
-      //       label: 'Kitchen',
-      //     ),
-      //     BottomNavigationBarItem(
-      //       icon: Icon(Icons.bookmark),
-      //       label: 'Bookmarks',
-      //     ),
-      //     BottomNavigationBarItem(
-      //       icon: Icon(Icons.person),
-      //       label: 'Profile',
-      //     ),
-      //   ],
-      // ),
     );
   }
 }

@@ -6,6 +6,7 @@ import 'package:firebase_login/features/user_auth/presentaions/pages/sign_up_pag
 import 'package:firebase_login/features/user_auth/presentaions/pages/kitchen_page.dart';
 import 'package:firebase_login/features/user_auth/presentaions/pages/ingredients_page.dart';
 import 'package:firebase_login/features/user_auth/presentaions/pages/bookmarks_page.dart';
+import 'package:firebase_login/features/user_auth/presentaions/pages/profile_info.dart';
 
 
 import 'package:firebase_core/firebase_core.dart';
@@ -27,12 +28,13 @@ class MyApp extends StatelessWidget {
           // Here, you can decide whether to show the LoginPage or HomePage based on user authentication
           child: HomePage(),
         ),
-        '/login': (context) => const LoginPage(),
-        '/signUp': (context) => const SignUpPage(),
+        '/login': (context) =>  LoginPage(),
+        '/signUp': (context) =>  SignUpPage(),
         '/Home': (context) => const HomePage(),
         '/kitchen': (context) => const KitchenPage(),
         '/ingredients': (context) => const IngredientsPage(),
         '/bookmarks' :  (context) => const BookmarksPage(),
+        
       },
     );
   }

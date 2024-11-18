@@ -1,76 +1,80 @@
 import 'package:flutter/material.dart';
 
-class BookmarksPage extends StatefulWidget {
-  const BookmarksPage({super.key});
+class BookmarksPage extends StatelessWidget {
+  const BookmarksPage({Key? key}) : super(key: key);
 
-  @override
-  _BookmarksPageState createState() => _BookmarksPageState();
-}
-
-class _BookmarksPageState extends State<BookmarksPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF00B473),
-        elevation: 0,
+        automaticallyImplyLeading: false, // Removed the back arrow
+        backgroundColor: const Color(0xff00b473),
         centerTitle: true,
         title: const Text(
-          'Bookmarks',
-          style: TextStyle(
-            fontSize: 32,
-            fontWeight: FontWeight.w900,
-            color: Colors.white,
-          ),
+          "Bookmarks",
+          style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
         ),
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16.0),
-        // Uncomment and use your actual image assets
-        // children: [
-        //   _buildBookmarkItem('assets/image9.png', 'Tomato Spaghetti'),
-        //   _buildBookmarkItem('assets/image10.png', 'Banana Bread'),
-        //   _buildBookmarkItem('assets/image11.png', 'Tomato Soup'),
-        //   _buildBookmarkItem('assets/image16.png', 'Ceasar Salad'),
-        //   _buildBookmarkItem('assets/image17.png', 'Moussaka'),
-        //   _buildBookmarkItem('assets/image18.png', 'French Toast'),
-        //   _buildBookmarkItem('assets/image19.png', 'Apple Pie'),
-        // ],
-      ));
-  //     bottomNavigationBar: BottomNavigationBar(
-  //       currentIndex: 1,
-  //       onTap: (index) {
-  //         switch (index) {
-  //           case 0:
-  //             Navigator.pushReplacementNamed(context, '/kitchen');
-  //             break;
-  //           case 1:
-  //             Navigator.pushReplacementNamed(context, '/bookmarks');
-  //             break;
-  //           case 2:
-  //             Navigator.pushReplacementNamed(context, '/profile');
-  //             break;
-  //         }
-  //       },
-  //       items: const [
-  //         BottomNavigationBarItem(
-  //           icon: Icon(Icons.kitchen),
-  //           label: 'Kitchen',
-  //         ),
-  //         BottomNavigationBarItem(
-  //           icon: Icon(Icons.bookmark),
-  //           label: 'Bookmarks',
-  //         ),
-  //         BottomNavigationBarItem(
-  //           icon: Icon(Icons.person),
-  //           label: 'Profile',
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+        child: Column(
+          children: [
+            _buildBookmarkCard(
+              imagePath: 'assets/image 9.png',
+              title: 'Tomato Spaghetti',
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
-  // Define your _buildBookmarkItem here as needed
-}
+  Widget _buildBookmarkCard({required String imagePath, required String title}) {
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        border: Border.all(color: const Color(0xff00b473), width: 2),
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: Column(
+        children: [
+          // Green bar at the top to reach the full width
+          Container(
+            height: 8,
+            decoration: const BoxDecoration(
+              color: Color(0xff00b473),
+              borderRadius: BorderRadius.vertical(top: Radius.circular(13)),
+            ),
+          ),
+          // Bookmark Item
+          ListTile(
+            leading: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.asset(
+                imagePath,
+                height: 80,
+                width: 80,
+                fit: BoxFit.cover,
+              ),
+            ),
+            title: Text(
+              title,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
+            trailing: Icon(
+              Icons.bookmark,
+              color: const Color(0xff00b473),
+              size: 30,
+            ),
+            contentPadding: const EdgeInsets.all(16),
+          ),
+        ],
+      ),
+    );
+  }
 }

@@ -34,8 +34,8 @@ class _SplashScreenState extends State<SplashScreen> {
           children: [
             Image.asset(
               'assets/logo.png',  // Replace with your logo path
-              height: 100,
-              width: 100,
+              height: 200,
+              width: 200,
             ),
             const SizedBox(height: 24),
             const Text(

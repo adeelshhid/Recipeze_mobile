@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_login/features/user_auth/presentaions/pages/ingredients_page.dart';
 import 'package:firebase_login/features/user_auth/presentaions/pages/bookmarks_page.dart';
 
- import 'package:firebase_login/features/user_auth/presentaions/pages/profile_page.dart'; // Uncomment when ProfilePage is available
+ import 'package:firebase_login/features/user_auth/presentaions/pages/profile_page.dart'; 
 
 class KitchenPage extends StatefulWidget {
   const KitchenPage({Key? key}) : super(key: key);
@@ -19,8 +19,6 @@ class _KitchenPageState extends State<KitchenPage> {
     BookmarksPage(),
     ProfilePage(),
     IngredientsPage(),
-  // Uncomment when ProfilePage is available
-
   ];
 
   void _onItemTapped(int index) {
@@ -31,36 +29,41 @@ class _KitchenPageState extends State<KitchenPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: _pages,
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.kitchen),
-            label: "Kitchen",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bookmark),
-            label: "Bookmarks",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: "Profile",
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: const Color(0xff00b473),
-        unselectedItemColor: Colors.grey,
-        onTap: _onItemTapped,
+    return WillPopScope(
+      onWillPop: () async {
+        // Returning `false` will prevent navigating back
+        return false;
+      },
+      child: Scaffold(
+        body: IndexedStack(
+          index: _selectedIndex,
+          children: _pages,
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.kitchen),
+              label: "Kitchen",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.bookmark),
+              label: "Bookmarks",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person),
+              label: "Profile",
+            ),
+          ],
+          currentIndex: _selectedIndex,
+          selectedItemColor: const Color(0xff00b473),
+          unselectedItemColor: Colors.grey,
+          onTap: _onItemTapped,
+        ),
       ),
     );
   }
 }
 
-// Separate widget for KitchenPage content
 class KitchenPageContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -68,6 +71,7 @@ class KitchenPageContent extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: const Color(0xff00b473),
         centerTitle: true,
+        automaticallyImplyLeading: false, // This removes the back arrow
         title: const Text(
           "Kitchen",
           style: TextStyle(
@@ -101,13 +105,14 @@ class KitchenPageContent extends StatelessWidget {
                 const SizedBox(width: 10),
                 IconButton(
                   icon: const Icon(Icons.add),
-      onPressed: () {
-  Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => const IngredientsPage()),
-  );
-},
-
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const IngredientsPage(),
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
@@ -151,7 +156,10 @@ class KitchenPageContent extends StatelessWidget {
               ),
               child: const Text(
                 "Generate Recipes",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
               ),
             ),
           ],
@@ -160,7 +168,7 @@ class KitchenPageContent extends StatelessWidget {
     );
   }
 
-  // Helper function to build each fridge item row
+  // Define the _buildFridgeItem method inside the KitchenPageContent class
   Widget _buildFridgeItem(String itemName) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
