@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:firebase_login/core/api/kitchen_controller.dart';
 
 class IngredientsPage extends StatefulWidget {
   const IngredientsPage({super.key});
@@ -9,34 +9,79 @@ class IngredientsPage extends StatefulWidget {
 }
 
 class _IngredientsPageState extends State<IngredientsPage> {
-  final TextEditingController _searchController = TextEditingController();
-  final List<String> ingredients = [
-    "Rice (Any)",
-    "Pasta (Any)",
-    "Chicken (Any)",
-    "Olive Oil",
-    "Vegetable Oil",
-    "Eggs",
-    "Tomato Paste",
-    "Tomato Sauce",
-    "Cooking Cream",
-    "Flour",
-    "Baking Powder",
-    "Butter",
-    "Salt",
-    "Sugar",
-    "Balsamic Vinegar",
-    "Vanilla Extract",
-  ];
-
-  // Map to keep track of selected ingredients
-  final Map<String, bool> selectedIngredients = {};
+  final KitchenController _kitchenController = KitchenController();
+  List<Map<String, dynamic>> ingredients = [];
+  final Map<int, bool> selectedIngredients = {};
+  int currentPage = 1;
+  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    for (var ingredient in ingredients) {
-      selectedIngredients[ingredient] = false;
+    _fetchAvailableIngredients(currentPage);
+  }
+
+  Future<void> _fetchAvailableIngredients(int page) async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      final data = await _kitchenController.getAvailableIngredients(page: page);
+      if (data != null && data.isNotEmpty) {
+        setState(() {
+          ingredients = data;
+          for (var ingredient in data) {
+            final id = ingredient['id'] as int;
+            selectedIngredients[id] = false;  // Assuming initially not selected
+          }
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('No ingredients found for page: $page')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load available ingredients: $e')),
+      );
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  void _toggleIngredient(int id) async {
+    try {
+      await _kitchenController.toggleIngredient(id);
+      setState(() {
+        selectedIngredients[id] = !(selectedIngredients[id] ?? false);
+        if (!selectedIngredients[id]!) {
+          ingredients.removeWhere((ingredient) => ingredient['id'] == id);
+        }
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(selectedIngredients[id]! ? 'Added to kitchen' : 'Removed from kitchen')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to toggle ingredient: $e')),
+      );
+    }
+  }
+
+  void _nextPage() {
+    if (!isLoading) {
+      currentPage++;
+      _fetchAvailableIngredients(currentPage);
+    }
+  }
+
+  void _previousPage() {
+    if (!isLoading && currentPage > 1) {
+      currentPage--;
+      _fetchAvailableIngredients(currentPage);
     }
   }
 
@@ -54,7 +99,7 @@ class _IngredientsPageState extends State<IngredientsPage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-            Navigator.pop(context); // Navigate back to Kitchen Page
+            Navigator.pop(context);
           },
         ),
       ),
@@ -65,20 +110,6 @@ class _IngredientsPageState extends State<IngredientsPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Search Bar
-              TextField(
-                controller: _searchController,
-                decoration: InputDecoration(
-                  hintText: 'Search Ingredients',
-                  prefixIcon: const Icon(Icons.search),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-
-              // Cooking Essentials Section
               const Text(
                 "Cooking Essentials",
                 style: TextStyle(
@@ -87,52 +118,44 @@ class _IngredientsPageState extends State<IngredientsPage> {
                 ),
               ),
               const SizedBox(height: 10),
-
-              // Ingredients List as Selectable Chips
               Expanded(
-                child: Wrap(
-                  spacing: 10,
-                  runSpacing: 10,
-                  children: ingredients.map((ingredient) {
-                    final isSelected = selectedIngredients[ingredient]!;
-                    return ChoiceChip(
-                      label: Text(
-                        ingredient,
-                        style: TextStyle(
-                          color: isSelected ? Colors.white : Colors.black,
-                          fontSize: 14,
-                        ),
+                child: ingredients.isEmpty
+                    ? const Center(child: Text("No ingredients found."))
+                    : Wrap(
+                        spacing: 8.0,
+                        runSpacing: 4.0,
+                        children: ingredients.map((ingredient) {
+                          final id = ingredient['id'] as int;
+                          final isSelected = selectedIngredients[id] ?? false;
+                          return ChoiceChip(
+                            label: Text(ingredient['name']),
+                            selected: isSelected,
+                            onSelected: (selected) {
+                              _toggleIngredient(id);
+                            },
+                            selectedColor: Colors.green,
+                            backgroundColor: Colors.white,
+                          );
+                        }).toList(),
                       ),
-                      selected: isSelected,
-                      onSelected: (selected) {
-                        setState(() {
-                          selectedIngredients[ingredient] = selected;
-                        });
-                      },
-                      selectedColor: const Color(0xff00b473),
-                      backgroundColor: Colors.grey[200],
-                    );
-                  }).toList(),
-                ),
               ),
               const SizedBox(height: 20),
-
-              // Save Button
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xff00b473),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                  ),
-                  child: const Text(
-                    "Save",
-                    style: TextStyle(color: Colors.white, fontSize: 18),
-                  ),
+              if (isLoading)
+                const Center(
+                  child: CircularProgressIndicator(),
                 ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ElevatedButton(
+                    onPressed: _previousPage,
+                    child: const Text('Previous'),
+                  ),
+                  ElevatedButton(
+                    onPressed: _nextPage,
+                    child: const Text('Next'),
+                  ),
+                ],
               ),
             ],
           ),

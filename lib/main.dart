@@ -9,11 +9,10 @@ import 'package:firebase_login/features/user_auth/presentaions/pages/bookmarks_p
 import 'package:firebase_login/features/user_auth/presentaions/pages/profile_info.dart';
 
 
-import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(); // Initialize Firebase
+  // Initialize Firebase
   runApp(MyApp());
 }
 class MyApp extends StatelessWidget {

@@ -1,5 +1,3 @@
-// features/user_auth/presentations/pages/profile_edit.dart
-
 import 'package:flutter/material.dart';
 import 'package:firebase_login/core/api/auth_service.dart';
 import 'package:firebase_login/core/api/api_client.dart';
@@ -78,7 +76,8 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
           backgroundColor: Colors.green,
         ),
       );
-      Navigator.pushReplacementNamed(context, '/profile');
+      // Update the profile information and redirect back to profile page
+      Navigator.of(context).pop(true); // Pass true to indicate profile updated
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
