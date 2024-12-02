@@ -23,7 +23,7 @@ class _ProfileInfoPageState extends State<ProfileInfoPage> {
 
     // Initialize ApiClient and AuthService
     apiClient = ApiClient(
-      baseUrl: 'http://10.0.2.2:8000/api/v1/recipeze',
+      baseUrl: 'http://15.237.250.139/api/v1/recipeze',
       defaultHeaders: {'Content-Type': 'application/json'},
     );
     authService = AuthService(apiClient: apiClient);
@@ -53,7 +53,8 @@ class _ProfileInfoPageState extends State<ProfileInfoPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xff00b473),
-        title: const Text('Profile Info', style: TextStyle(color: Colors.white)),
+        title:
+            const Text('Profile Info', style: TextStyle(color: Colors.white)),
         centerTitle: true,
       ),
       body: userProfile == null
@@ -71,12 +72,14 @@ class _ProfileInfoPageState extends State<ProfileInfoPage> {
                   const SizedBox(height: 20),
                   Text(
                     'Name: ${userProfile!['name']}',
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 10),
                   Text(
                     'Email: ${userProfile!['email']}',
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const Spacer(),
                   SizedBox(
@@ -85,14 +88,16 @@ class _ProfileInfoPageState extends State<ProfileInfoPage> {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const ProfileEditPage()),
+                          MaterialPageRoute(
+                              builder: (context) => const ProfileEditPage()),
                         );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xff00b473),
                         padding: const EdgeInsets.symmetric(vertical: 16),
                       ),
-                      child: const Text('Edit Profile', style: TextStyle(fontSize: 18, color: Colors.white)),
+                      child: const Text('Edit Profile',
+                          style: TextStyle(fontSize: 18, color: Colors.white)),
                     ),
                   ),
                 ],

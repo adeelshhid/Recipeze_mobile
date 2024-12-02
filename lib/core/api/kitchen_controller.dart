@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class KitchenController {
   final KitchenService kitchenService = KitchenService(
     apiClient: ApiClient(
-      baseUrl: 'http://10.0.2.2:8000/api/v1/recipeze',
+      baseUrl: 'http://15.237.250.139/api/v1/recipeze',
       defaultHeaders: {'Content-Type': 'application/json'},
     ),
   );
@@ -15,16 +15,33 @@ class KitchenController {
     return prefs.getString('auth_token');
   }
 
-  Future<List<Map<String, dynamic>>> getAvailableIngredients({int page = 1}) async {
+  Future<List<Map<String, dynamic>>> getAvailableIngredients(
+      {int page = 1}) async {
     String? token = await _getToken();
     if (token == null) throw Exception('No token found. Please log in again.');
 
     try {
       print('Fetching ingredients for page: $page with token: $token');
-      List<Map<String, dynamic>> ingredients = await kitchenService.getAvailableIngredients(
+      List<Map<String, dynamic>> ingredients =
+          await kitchenService.getAvailableIngredients(
         token,
         page: page,
       );
+      print('API response: $ingredients');
+      return ingredients;
+    } catch (e) {
+      print('Error fetching ingredients: $e');
+      throw Exception('Failed to load available ingredients: $e');
+    }
+  }
+
+  Future<List> getAllIngredients() async {
+    String? token = await _getToken();
+    if (token == null) throw Exception('No token found. Please log in again.');
+
+    try {
+      print('Fetching ingredients with token: $token');
+      List ingredients = await kitchenService.getAllIngredients(token);
       print('API response: $ingredients');
       return ingredients;
     } catch (e) {
@@ -45,13 +62,14 @@ class KitchenController {
     }
   }
 
- Future<List<String>> getKitchenItems() async {
+  Future<List<Map<String, dynamic>>> getKitchenItems() async {
     String? token = await _getToken();
     if (token == null) throw Exception('No token found. Please log in again.');
 
     try {
       print('Fetching kitchen items with token: $token');
-      List<String> kitchenItems = await kitchenService.getKitchenItems(token);
+      List<Map<String, dynamic>> kitchenItems =
+          await kitchenService.getKitchenItems(token);
       print('API response: $kitchenItems');
       return kitchenItems;
     } catch (e) {

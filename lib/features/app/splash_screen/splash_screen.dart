@@ -9,31 +9,34 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-
   @override
   void initState() {
-    Future.delayed(
-      const Duration(seconds: 3), () {
-        Navigator.pushAndRemoveUntil(
-          context, 
-          MaterialPageRoute(builder: (context) => widget.child!), 
-          (route) => false
-        );
-      }
-    );
     super.initState();
+    Future.delayed(
+      const Duration(seconds: 3),
+      () {
+        if (mounted) {
+          // Ensure the widget is still mounted
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => widget.child!),
+            (route) => false,
+          );
+        }
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color((0xFF00B473)), // Set the background to green
+      backgroundColor: const Color(0xFF00B473), // Set the background to green
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
-              'assets/logo.png',  // Replace with your logo path
+              'assets/logo.png', // Replace with your logo path
               height: 200,
               width: 200,
             ),
@@ -56,7 +59,7 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
             const SizedBox(height: 40),
             const CircularProgressIndicator(
-              color: Colors.white,  // Circular loader color
+              color: Colors.white, // Circular loader color
             ),
           ],
         ),

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-
-
 void showToast({required String message}) async {
   try {
     await Fluttertoast.showToast(

@@ -18,11 +18,13 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   bool _isPasswordVisible = false; // Password visibility toggle for password
-  bool _isConfirmPasswordVisible = false; // Password visibility toggle for confirm password
+  bool _isConfirmPasswordVisible =
+      false; // Password visibility toggle for confirm password
   bool _isLoading = false;
 
   late final ApiClient apiClient;
@@ -30,7 +32,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
   _SignUpPageState() {
     apiClient = ApiClient(
-      baseUrl: 'http://10.0.2.2:8000/api/v1/recipeze',
+      baseUrl: 'http://15.237.250.139/api/v1/recipeze',
       defaultHeaders: {'Content-Type': 'application/json'},
     );
 
@@ -189,7 +191,9 @@ class _SignUpPageState extends State<SignUpPage> {
                     ),
                     suffixIcon: IconButton(
                       icon: Icon(
-                        _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                        _isPasswordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
                         color: Colors.grey,
                       ),
                       onPressed: () {
@@ -230,12 +234,15 @@ class _SignUpPageState extends State<SignUpPage> {
                     ),
                     suffixIcon: IconButton(
                       icon: Icon(
-                        _isConfirmPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                        _isConfirmPasswordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
                         color: Colors.grey,
                       ),
                       onPressed: () {
                         setState(() {
-                          _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+                          _isConfirmPasswordVisible =
+                              !_isConfirmPasswordVisible;
                         });
                       },
                     ),

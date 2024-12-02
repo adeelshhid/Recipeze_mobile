@@ -6,7 +6,8 @@ import '../../core/api/api_client.dart';
 class AuthController {
   final AuthService authService = AuthService(
     apiClient: ApiClient(
-      baseUrl: 'http://10.0.2.2:8000/api/v1/recipeze', // Updated to use your actual API base URL
+      baseUrl:
+          'http://15.237.250.139/api/v1/recipeze', // Updated to use your actual API base URL
       defaultHeaders: {'Content-Type': 'application/json'},
     ),
   );

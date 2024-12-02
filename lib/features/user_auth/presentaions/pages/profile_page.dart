@@ -21,7 +21,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   _ProfilePageState() {
     apiClient = ApiClient(
-      baseUrl: 'http://10.0.2.2:8000/api/v1/recipeze',
+      baseUrl: 'http://15.237.250.139/api/v1/recipeze',
       defaultHeaders: {'Content-Type': 'application/json'},
     );
 
@@ -99,7 +99,8 @@ class _ProfilePageState extends State<ProfilePage> {
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
               child: Column(
                 children: [
                   CircleAvatar(
@@ -138,7 +139,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xff00b473),
-                      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 32, vertical: 12),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),

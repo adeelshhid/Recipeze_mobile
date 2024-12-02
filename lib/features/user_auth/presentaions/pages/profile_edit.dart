@@ -16,7 +16,8 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
 
   @override
   void initState() {
@@ -24,7 +25,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
 
     // Initialize ApiClient and AuthService
     apiClient = ApiClient(
-      baseUrl: 'http://10.0.2.2:8000/api/v1/recipeze',
+      baseUrl: 'http://15.237.250.139/api/v1/recipeze',
       defaultHeaders: {'Content-Type': 'application/json'},
     );
     authService = AuthService(apiClient: apiClient);
@@ -93,7 +94,8 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xff00b473),
-        title: const Text('Edit Profile', style: TextStyle(color: Colors.white)),
+        title:
+            const Text('Edit Profile', style: TextStyle(color: Colors.white)),
         centerTitle: true,
       ),
       body: Padding(
@@ -130,7 +132,8 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                   backgroundColor: const Color(0xff00b473),
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
-                child: const Text('Update Information', style: TextStyle(fontSize: 18, color: Colors.white)),
+                child: const Text('Update Information',
+                    style: TextStyle(fontSize: 18, color: Colors.white)),
               ),
             ),
           ],

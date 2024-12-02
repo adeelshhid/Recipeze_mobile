@@ -1,3 +1,4 @@
+import 'package:firebase_login/global/common/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_login/features/user_auth/presentaions/pages/bookmarks_page.dart';
 import 'package:firebase_login/features/user_auth/presentaions/pages/profile_page.dart';
@@ -29,6 +30,14 @@ class _KitchenPageState extends State<KitchenPage> {
     _fetchKitchenItems();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (mounted) {
+      _fetchKitchenItems();
+    }
+  }
+
   Future<void> _fetchKitchenItems() async {
     setState(() {
       isLoading = true;
@@ -37,8 +46,12 @@ class _KitchenPageState extends State<KitchenPage> {
     try {
       final kitchenItems = await _kitchenController.getKitchenItems();
       setState(() {
-        _kitchenItems = kitchenItems.map((item) => {'name': item}).toList();
-        _pages[0] = KitchenPageContent(kitchenItems: _kitchenItems);
+        _kitchenItems = kitchenItems;
+        _pages[0] = KitchenPageContent(
+          kitchenItems: _kitchenItems,
+          onToggle: _toggleIngredient,
+          onAddIngredient: _navigateToIngredientsPage,
+        );
         isLoading = false;
       });
     } catch (e) {
@@ -47,6 +60,28 @@ class _KitchenPageState extends State<KitchenPage> {
         isLoading = false;
       });
     }
+  }
+
+  Future<void> _toggleIngredient(int id, String name) async {
+    try {
+      await _kitchenController.toggleIngredient(id);
+      showToast(message: '$name removed from kitchen');
+      _fetchKitchenItems();
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void _navigateToIngredientsPage() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => IngredientsPage(
+          kitchenItemIds:
+              _kitchenItems.map((item) => item['id'] as int).toList(),
+        ),
+      ),
+    ).then((_) => _fetchKitchenItems());
   }
 
   void _onItemTapped(int index) {
@@ -90,16 +125,6 @@ class _KitchenPageState extends State<KitchenPage> {
           unselectedItemColor: Colors.grey,
           onTap: _onItemTapped,
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const IngredientsPage()),
-            );
-          },
-          child: const Icon(Icons.add),
-          backgroundColor: const Color(0xff00b473),
-        ),
       ),
     );
   }
@@ -107,8 +132,15 @@ class _KitchenPageState extends State<KitchenPage> {
 
 class KitchenPageContent extends StatelessWidget {
   final List<Map<String, dynamic>> kitchenItems;
+  final Future<void> Function(int, String) onToggle;
+  final VoidCallback onAddIngredient;
 
-  const KitchenPageContent({required this.kitchenItems, Key? key}) : super(key: key);
+  const KitchenPageContent({
+    required this.kitchenItems,
+    required this.onToggle,
+    required this.onAddIngredient,
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -135,18 +167,19 @@ class KitchenPageContent extends StatelessWidget {
             return ChoiceChip(
               label: Text(item['name']),
               selected: true,
-              onSelected: (selected) {
-                // Handle item removal
-                // Call API to remove item if needed
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('${item['name']} removed from kitchen')),
-                );
+              onSelected: (selected) async {
+                await onToggle(item['id'], item['name']);
               },
               selectedColor: Colors.green,
               backgroundColor: Colors.white,
             );
           }).toList(),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: onAddIngredient,
+        child: const Icon(Icons.add),
+        backgroundColor: const Color(0xff00b473),
       ),
     );
   }
