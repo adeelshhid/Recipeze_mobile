@@ -17,6 +17,11 @@ class AuthService {
     await prefs.setString('auth_token', token);
   }
 
+  Future<void> removeToken() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('auth_token');
+  }
+
   // Get token function
   Future<String?> getToken() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -65,7 +70,9 @@ class AuthService {
         return true;
       } else {
         final errorData = json.decode(response.body);
-        showToast(message: 'Registration failed: ${errorData['errors']['email'] ?? errorData['message']}');
+        showToast(
+            message:
+                'Registration failed: ${errorData['errors']['email'] ?? errorData['message']}');
         return false;
       }
     } catch (e) {
@@ -78,7 +85,8 @@ class AuthService {
   Future<bool> logout() async {
     try {
       final response = await apiClient.post('logout', token: await getToken());
-      if ((response.statusCode == 200 || response.statusCode == 201) && response.body.isValidJson()) {
+      if ((response.statusCode == 200 || response.statusCode == 201) &&
+          response.body.isValidJson()) {
         final data = json.decode(response.body);
         if (data['message'] == 'User Logged Out') {
           showToast(message: 'Logged out successfully');
@@ -115,7 +123,8 @@ class AuthService {
         return null;
       } else {
         final errorData = json.decode(response.body);
-        showToast(message: errorData['message'] ?? 'Failed to fetch profile info');
+        showToast(
+            message: errorData['message'] ?? 'Failed to fetch profile info');
         return null;
       }
     } catch (e) {

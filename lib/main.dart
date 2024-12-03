@@ -1,5 +1,6 @@
 import 'package:firebase_login/core/api/api_client.dart';
 import 'package:firebase_login/core/api/auth_service.dart';
+import 'package:firebase_login/core/api/unauthorize_handler.dart';
 import 'package:firebase_login/features/app/splash_screen/splash_screen.dart';
 import 'package:firebase_login/features/user_auth/presentaions/pages/generate_recipe.dart';
 import 'package:firebase_login/features/user_auth/presentaions/pages/login_pages.dart';
@@ -9,7 +10,6 @@ import 'package:firebase_login/features/user_auth/presentaions/pages/sign_up_pag
 import 'package:firebase_login/features/user_auth/presentaions/pages/kitchen_page.dart';
 import 'package:firebase_login/features/user_auth/presentaions/pages/ingredients_page.dart';
 import 'package:firebase_login/features/user_auth/presentaions/pages/bookmarks_page.dart';
-import 'package:firebase_login/features/user_auth/presentaions/pages/profile_info.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,8 +19,7 @@ void main() async {
 class MyApp extends StatelessWidget {
   final AuthService authService = AuthService(
     apiClient: ApiClient(
-      baseUrl:
-          'http://15.237.250.139/api/v1/recipeze', // Updated to use your actual API base URL
+      baseUrl: 'http://15.237.250.139/api/v1/recipeze',
       defaultHeaders: {'Content-Type': 'application/json'},
     ),
   );
@@ -28,9 +27,9 @@ class MyApp extends StatelessWidget {
   Future<Widget> _getInitialPage() async {
     String? token = await authService.getToken();
     if (token != null) {
-      return const KitchenPage(); // Navigate to KitchenPage if token is available
+      return const KitchenPage(); // Navigate to KitchenPage if token exists
     } else {
-      return LoginPage(); // Otherwise, navigate to LoginPage
+      return const HomePage(); // Otherwise, navigate to LoginPage
     }
   }
 
@@ -40,7 +39,6 @@ class MyApp extends StatelessWidget {
       future: _getInitialPage(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          // Show a loading indicator while determining the initial page
           return const MaterialApp(
             debugShowCheckedModeBanner: false,
             home: SplashScreen(),
@@ -48,8 +46,9 @@ class MyApp extends StatelessWidget {
         } else if (snapshot.hasData) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
+            navigatorKey: UnauthorizedHandler().navigatorKey, // Add global key
             title: 'Flutter Firebase',
-            home: snapshot.data, // Set the initial page
+            home: snapshot.data, // Set initial page dynamically
             routes: {
               '/login': (context) => LoginPage(),
               '/signUp': (context) => SignUpPage(),
